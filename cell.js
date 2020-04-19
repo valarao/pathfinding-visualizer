@@ -9,7 +9,7 @@ class Cell {
 
     this.neighbors = [];
     this.previous;
-    this.wall = random(1) < 0.2;
+    this.wall = random(1) < 0.3;
 
     this.show = col => {
       const cellColor = this.wall ? 0 : col;
@@ -35,6 +35,19 @@ class Cell {
 
       if (y > 0) {
         this.neighbors.push(grid[x][y - 1]);
+      }
+
+      if (x > 0 && y > 0) {
+        this.neighbors.push(grid[x - 1][y - 1]);
+      }
+      if (x < NUM_COLS - 1 && y > 0) {
+        this.neighbors.push(grid[x + 1][y - 1]);
+      }
+      if (x > 0 && y < NUM_ROWS - 1) {
+        this.neighbors.push(grid[x - 1][y + 1]);
+      }
+      if (x < NUM_COLS - 1 && y < NUM_ROWS - 1) {
+        this.neighbors.push(grid[x + 1][y + 1]);
       }
     }
   }

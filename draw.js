@@ -1,5 +1,5 @@
-const NUM_COLS = 25;
-const NUM_ROWS = 25;
+const NUM_COLS = 100;
+const NUM_ROWS = 50;
 
 let grid;
 let openSet, closedSet;
@@ -36,7 +36,7 @@ const removeCell = (arr, elt) => {
 }
 
 const heuristic = (a, b) => {
-  return dist(a.i, a.j, b.i, b.j)
+  return dist(a.x, a.y, b.x, b.y)
 }
 
 const checkCurrentCell = openSet => {
@@ -53,6 +53,14 @@ const checkCurrentCell = openSet => {
     noLoop();
   }
   return current;
+}
+
+const lookForBetterPath = (neighbor, newPath, current, end) => {
+  if (newPath) {
+    neighbor.h = heuristic(neighbor, end);
+    neighbor.f = neighbor.g + neighbor.h;
+    neighbor.previous = current;
+  }
 }
 
 const queueNeighbors = (current, neighbors) => {
@@ -74,14 +82,6 @@ const queueNeighbors = (current, neighbors) => {
 
       lookForBetterPath(neighbor, newPath, current, end);
     }
-  }
-}
-
-const lookForBetterPath = (neighbor, newPath, current, end) => {
-  if (newPath) {
-    neighbor.h = heuristic(neighbor, end);
-    neighbor.f = neighbor.g + neighbor.h;
-    neighbor.previous = current;
   }
 }
 
@@ -131,15 +131,17 @@ const drawPath = path => {
 }
 
 setup = () => {
-  createCanvas(400, 400);
+  createCanvas(800, 400);
   grid = createGrid(NUM_COLS, NUM_ROWS);
   openSet = [];
   closedSet = [];
   cellWidth = width / NUM_COLS;
   cellHeight = height / NUM_ROWS;
 
-  start = grid[0][0];
-  end = grid[NUM_COLS - 1][NUM_ROWS - 1];
+  // start = grid[NUM_COLS / 2][NUM_ROWS / 2];
+  // end = grid[NUM_COLS - 1][NUM_ROWS - 1];
+  start = grid[round((NUM_COLS - 1) * Math.random())][round((NUM_ROWS - 1) * Math.random())]
+  end = grid[round((NUM_COLS - 1) * Math.random())][round((NUM_ROWS - 1) * Math.random())]
   start.wall = false;
   end.wall = false;
   openSet.push(start);
@@ -158,9 +160,12 @@ draw = () => {
   queueNeighbors(current, current.neighbors);
   
   background(255);
+  
   drawWalls(grid);
   drawVisitedCells(closedSet);
   drawCandidateCells(openSet);  
   const path = createPath(current);
   drawPath(path);
+  start.show(color(0, 255, 255));
+  end.show(color(0, 255, 0));
 }
